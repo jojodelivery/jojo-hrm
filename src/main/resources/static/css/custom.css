@@ -1,0 +1,352 @@
+footer {
+	position: absolute;
+	bottom: 0;
+	height: 20px;
+	background-color: #f5f5f5;
+}
+
+#bulletstyle {
+	display: list-item;
+	margin-left: 1.3em;
+	list-style-type: circle;
+}
+
+.visuallyhidden {
+	display: none;
+}
+
+.wizard-progress {
+	list-style: none;
+	list-style-image: none;
+	margin: 0;
+	padding: 0;
+	margin-top: -20px;
+	float: unset;
+	white-space: nowrap;
+}
+
+.wizard-progress li {
+	float: left;
+	margin-right: 50px;
+	text-align: center;
+	position: relative;
+	width: 100px;
+}
+
+.wizard-progress .step-name {
+	display: table-cell;
+	height: 32px;
+	vertical-align: bottom;
+	text-align: center;
+	width: 100px;
+}
+
+.wizard-progress .step-name-wrapper {
+	display: table-cell;
+	height: 100%;
+	vertical-align: bottom;
+}
+
+.wizard-progress .step-num {
+	font-size: 14px;
+	font-weight: bold;
+	border: 3px solid #000;
+	border-radius: 0%;
+	width: 25px;
+	display: inline-block;
+	margin-top: 10px;
+}
+
+.wizard-progress .step-num:after {
+	content: "";
+	display: block;
+	background: #000;
+	height: 5px;
+	width: 130px;
+	position: absolute;
+	bottom: 10px;
+	left: 60px;
+}
+
+.wizard-progress li:last-of-type .step-num:after {
+	display: none;
+}
+
+.wizard-progress .active-step .step-num {
+	background-color: #4caf50;
+}
+
+.subOrdStatusText {
+	color: #4caf50;
+}
+
+.addBtn {
+	background: url("../images/addBtn.png") no-repeat scroll 5px center #eee;
+	color: #000;
+	cursor: pointer;
+	float: left;
+	font-size: 14px;
+	height: 40px;
+	line-height: 50px;
+	margin: 5px 0;
+	padding-left: 28px;
+	text-align: left;
+}
+
+.col-md-12.loadTable {
+	float: left;
+	border-bottom: 2px solid grey;
+	padding: 6px 0;
+	text-align: center;
+	vertical-align: middle;
+	background-color: #f9f9f9;
+}
+
+.col-md-12.rateCalculation {
+	padding: 6px 0;
+	float: left;
+}
+
+.mapVehicleBtn {
+	float: right;
+}
+
+.updateStatusBtn {
+	margin: 0px 10px 10px;
+	float: right;
+}
+
+.col-md-12.scheduleTable {
+	float: left;
+	border-bottom: 2px solid grey;
+	padding: 6px 0;
+	text-align: center;
+	vertical-align: middle;
+	background-color: #f9f9f9;
+}
+
+.action-icon-style {
+	cursor: pointer;
+	padding: 2px 4px;
+}
+
+.tracking {
+	float: left;
+	width: 200px;
+}
+
+.tracking-message {
+	float: left;
+	width: 300px;
+}
+
+.tracking-head {
+	border: 1px solid black;
+	display: inline-block;
+	padding: 10px;
+	width: 900px;
+}
+
+.tracking-area {
+	display: block;
+}
+
+.pickupImage {
+	float: left;
+}
+
+.report {
+	border: 1px solid;
+	float: left;
+	height: auto;
+	text-align: center;
+	width: 140px;
+}
+
+.report-content {
+	border: 1px solid;
+	text-align: center;
+}
+
+.count-details {
+	cursor: pointer;
+	display: flex;
+	width: auto;
+}
+
+.daily-report-header {
+	float: left;
+	width: 50px;
+}
+
+.daily-report-header1 {
+	float: left;
+	width: 60%;
+	font-size: 12px;
+	border-right: 1px solid black;
+	height: 100%;
+	padding: 10px 0;
+}
+
+.daily-report-header2 {
+	float: left;
+	width: 50%;
+	font-size: 12px;
+	border-right: 1px solid black;
+	height: 100%;
+	padding: 10px 0;
+}
+
+.daily-report-header21 {
+	float: left;
+	width: 50%;
+	font-size: 12px;
+	padding: 10px 0;
+	height: 100%;
+}
+
+.daily-report-header3 {
+	float: left;
+	width: 12.5%;
+	font-size: 12px;
+	border-right: 1px solid black;
+	height: 100%;
+	padding: 10px 0;
+}
+
+.daily-report-header31 {
+	float: left;
+	width: 12.5%;
+	font-size: 12px;
+	height: 100%;
+	padding: 10px 0;
+}
+
+.daily-report-header5 {
+	float: left;
+	width: 20%;
+	font-size: 12px;
+	border-right: 1px solid black;
+	height: 100%;
+	padding: 10px 0;
+}
+
+.daily-report-header51 {
+	float: left;
+	width: 20%;
+	height: 100%;
+	font-size: 12px;
+	padding: 10px 0;
+}
+
+.daily-container .daily-report {
+	display: flex;
+}
+
+.daily-container .daily-report-sub-block {
+	width: 260px;
+	float: left;
+	text-align: center;
+	padding: 10px 0px 10px 0px;
+	display: table-cell;
+	vertical-align: top;
+	border: 1px solid black;
+}
+
+.daily-container .daily-report-sub-block1 {
+	width: 110px;
+	float: left;
+	text-align: center;
+	padding: 10px 0px 10px 0px;
+	display: table-cell;
+	vertical-align: top;
+	border: 1px solid black;
+}
+
+.daily-container .daily-report-sub-block2 {
+	width: 260px;
+	float: left;
+	text-align: center;
+	padding: 10px 0px 10px 0px;
+	display: table-cell;
+	vertical-align: top;
+	border: 1px solid black;
+}
+
+.daily-container .daily-report-sub-block3 {
+	width: 460px;
+	float: left;
+	text-align: center;
+	padding: 10px 0px 10px 0px;
+	display: table-cell;
+	vertical-align: top;
+	border: 1px solid black;
+}
+
+.daily-container .daily-report-sub-block4 {
+	width: 110px;
+	float: left;
+	text-align: center;
+	padding: 10px 0px 10px 0px;
+	display: table-cell;
+	vertical-align: top;
+	border: 1px solid black;
+}
+
+.daily-main-report-header {
+	border: 1px solid;
+	float: left;
+	height: auto;
+	text-align: center;
+}
+
+.daily-container {
+	display: table;
+	border-collapse: collapse;
+	width: 1200px;
+}
+
+.daily-container .daily-report-sub-block0 {
+	width: 260px;
+	float: left;
+	text-align: center;
+	display: table-cell;
+	vertical-align: top;
+	border: 1px solid black;
+}
+
+.daily-container .daily-report-sub-block10 {
+	width: 110px;
+	float: left;
+	text-align: center;
+	display: table-cell;
+	vertical-align: top;
+	border: 1px solid black;
+}
+
+.daily-container .daily-report-sub-block20 {
+	width: 260px;
+	float: left;
+	text-align: center;
+	display: table-cell;
+	vertical-align: top;
+	border: 1px solid black;
+}
+
+.daily-container .daily-report-sub-block30 {
+	width: 460px;
+	float: left;
+	text-align: center;
+	display: table-cell;
+	vertical-align: top;
+	border: 1px solid black;
+}
+
+.daily-container .daily-report-sub-block40 {
+	width: 110px;
+	float: left;
+	text-align: center;
+	display: table-cell;
+	vertical-align: top;
+	border: 1px solid black;
+}
