@@ -60,7 +60,7 @@
 					<div class="form-group input-group">
 						<span class="input-group-addon"><i class="fa fa-list-ol"></i></span>
 						<input type="text" class="form-control" placeholder="Mobile"
-							id="mobile" required>
+							id="mobile" maxlength="10" minlength="10" onkeypress="return isNumberKey(event)" required>
 					</div>
 				</div>
 				
@@ -229,6 +229,14 @@ function loadShifts(){
 		},
 	});
 }
+
+function isNumberKey(evt){
+	var charCode = (evt.which) ? evt.which : evt.keyCode;
+	if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)){
+		return false;
+	}
+	return true;
+} 
 
 function loadAvailableBand(){
 	var cityId =$("#city").val();

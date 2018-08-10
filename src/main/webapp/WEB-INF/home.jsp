@@ -104,6 +104,9 @@ body {
 			$("#home").load("manager-view-timecard");
 		});
 		
+		$('#view-payslip').click(function() {
+			$("#home").load("view-payslip");
+		});
 	})
 </script>
 <script>
@@ -132,6 +135,7 @@ body {
 			<div id="navbar" class="navbar-collapse collapse">
 
 				<ul class="nav navbar-nav navbar-right">
+					<%if(employee.getRole().equals("ADMIN")){ %>
 					<li class="dropdown"><a href="#" class="dropdown-toggle"
 						data-toggle="dropdown"><i class="fa fa-user"></i>User<b
 							class="caret"></b></a>
@@ -143,7 +147,7 @@ body {
 									class="fa fa-fw fa-power-off"></i>View DA</a></li>
 						</ul>
 					</li>
-
+					
 					<li class="dropdown"><a href="#" class="dropdown-toggle"
 						data-toggle="dropdown"><i class="fa fa-user"></i>Report<b
 							class="caret"></b></a>
@@ -159,7 +163,7 @@ body {
 									class="fa fa-fw fa-eye"></i>Download Payslip</a></li>
 						</ul>
 					</li>
-
+					<%} %>
 					<li class="dropdown"><a href="#" class="dropdown-toggle"
 						data-toggle="dropdown"><i class="fa fa-user"></i>Leave<b
 							class="caret"></b></a>
@@ -188,8 +192,8 @@ body {
 							<li><a href="#" id="approve-timecard"><i
 									class="fa fa-fw fa-user"></i>Approve Timecard</a></li>
 							<li class="divider"></li>
-							<li><a href="#" id="viewconsignmentmenu"><i
-									class="fa fa-fw fa-user"></i>Download Payslip</a></li>
+							<li><a href="#" id="view-payslip"><i
+									class="fa fa-fw fa-user"></i>View Payslip</a></li>
 						</ul>
 					</li>
 

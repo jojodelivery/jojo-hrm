@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.pin91.hrm.exception.JojoHRMException;
+import com.pin91.hrm.persistant.domain.DAPayslip;
 import com.pin91.hrm.persistant.domain.DailyPayment;
 import com.pin91.hrm.persistant.domain.DailyPerformance;
 import com.pin91.hrm.persistant.domain.DeliveryIncentiveConfig;
@@ -27,14 +29,21 @@ import com.pin91.hrm.persistant.domain.LeaveRequest;
 import com.pin91.hrm.persistant.domain.MposConfig;
 import com.pin91.hrm.persistant.domain.PenaltyConfig;
 import com.pin91.hrm.persistant.domain.Shifts;
+import com.pin91.hrm.persistant.repository.CityRepository;
+import com.pin91.hrm.persistant.repository.DABonusRepository;
+import com.pin91.hrm.persistant.repository.DAMonthlyPaymentRepository;
+import com.pin91.hrm.persistant.repository.DAPayslipRespository;
 import com.pin91.hrm.persistant.repository.DailyPaymentRepository;
 import com.pin91.hrm.persistant.repository.DailyPerformanceRepository;
 import com.pin91.hrm.persistant.repository.DeliveryIncentiveRepository;
 import com.pin91.hrm.persistant.repository.EmployeeRepository;
+import com.pin91.hrm.persistant.repository.FixedIncentivesRepository;
 import com.pin91.hrm.persistant.repository.LeaveRequestRepository;
 import com.pin91.hrm.persistant.repository.MposConfigRepository;
+import com.pin91.hrm.persistant.repository.OrgBandConfigRepository;
 import com.pin91.hrm.persistant.repository.PenaltyConfigRepository;
 import com.pin91.hrm.persistant.repository.ShiftsRepository;
+import com.pin91.hrm.transferobject.DAPayslipTO;
 import com.pin91.hrm.transferobject.DailyPerformanceTO;
 import com.pin91.hrm.transferobject.LeaveRequestTO;
 import com.pin91.hrm.utils.JojoErrorCode;
@@ -66,6 +75,18 @@ public class TimecardServiceImpl implements ITimecardService {
 	private DailyPaymentRepository dailyPaymentRepository;
 	@Autowired
 	private MposConfigRepository mposConfigRepository;
+	@Autowired
+	private FixedIncentivesRepository fixedIncentivesRepository;
+	@Autowired
+	private OrgBandConfigRepository orgBandConfigRepository;
+	@Autowired
+	private DABonusRepository daBonusRepository;
+	@Autowired
+	private DAMonthlyPaymentRepository daMonthlyPaymentRepository;
+	@Autowired
+	private CityRepository cityRepository;
+	@Autowired
+	private DAPayslipRespository daPayslipRespository;
 
 	ExecutorService executor = Executors.newFixedThreadPool(10);
 
@@ -161,9 +182,12 @@ public class TimecardServiceImpl implements ITimecardService {
 		for (Employee employee : empList) {
 			List<DailyPerformance> performances = dailyPerformanceRepository
 					.getDailyPerformance(employee.getEmployeeId(), status);
-			performanceList
-					.addAll(performances.stream().map(performance -> mapper.map(performance, DailyPerformanceTO.class))
-							.collect(Collectors.toList()));
+			for (DailyPerformance performance : performances) {
+				DailyPerformanceTO performanceTO = mapper.map(performance, DailyPerformanceTO.class);
+				Employee da = employeeRepository.getEmployeeByEmpId(performanceTO.getEmployeeId());
+				performanceTO.setEmployeeName(da.getName());
+				performanceList.add(performanceTO);
+			}
 		}
 		return performanceList;
 	}
@@ -198,6 +222,10 @@ public class TimecardServiceImpl implements ITimecardService {
 			dailyPayment.setTxnMonth(JojoHrmUtils.currentMonth());
 			dailyPayment.setTxnYear(JojoHrmUtils.currentYear());
 			dailyPayment.setEmployeeId(employee.getEmployeeId());
+			dailyPayment.setDeliveryIncentives(new BigDecimal(0));
+			dailyPayment.setPetrolCharges(new BigDecimal(0));
+			dailyPayment.setMposCharges(new BigDecimal(0));
+			dailyPayment.setLateCharges(new BigDecimal(0));
 			dailyPayment.setLateIndicator(isLate);
 			if (isLate) {
 				dailyPayment.setLateCharges(penaltyConfig.getLateFine());
@@ -205,6 +233,7 @@ public class TimecardServiceImpl implements ITimecardService {
 			int noOfShipment = dailyPerformance.getNoOfShipment();
 			dailyPayment.setNoOfDelivery(noOfShipment);
 			dailyPayment.setBasePayDeduction(true);
+			boolean isMPOSPaymentElligible = false;
 			// Calculate Daily Incentives
 			for (DeliveryIncentiveConfig deliveryConfig : incentiveConfigs) {
 				if ((noOfShipment >= deliveryConfig.getMinTarget() && deliveryConfig.getMaxTarget() != null
@@ -218,18 +247,21 @@ public class TimecardServiceImpl implements ITimecardService {
 							.multiply(new BigDecimal(noOfShipment));
 					dailyPayment.setDeliveryIncentives(deliveryCharges);
 					dailyPayment.setBasePayDeduction(false);
+					isMPOSPaymentElligible = true;
 				}
 			}
 
 			// Calculate MPOS
 			dailyPayment.setNoOfCodTxn(dailyPerformance.getNoOfCodDelivered());
 			dailyPayment.setNoOfMpsTxn(dailyPerformance.getNoOfMposTxn());
-			if (dailyPerformance.getNoOfCodDelivered() > 0 && dailyPerformance.getNoOfMposTxn() > 0) {
+			if (dailyPerformance.getNoOfCodDelivered() > 0 && dailyPerformance.getNoOfMposTxn() > 0
+					&& isMPOSPaymentElligible) {
 
-				int mposPercentage = (dailyPerformance.getNoOfMposTxn() / dailyPerformance.getNoOfCodDelivered()) * 100;
+				double mposPercentage = ((double) dailyPerformance.getNoOfMposTxn()
+						/ (double) dailyPerformance.getNoOfCodDelivered()) * 100;
 				BigDecimal mposValue = new BigDecimal(0);
 				for (MposConfig mposConfig : mposConfigList) {
-					if (mposPercentage > mposConfig.getMposPercentage()) {
+					if (mposPercentage >= mposConfig.getMposPercentage()) {
 						mposValue = mposConfig.getAmount();
 					}
 				}
@@ -248,10 +280,36 @@ public class TimecardServiceImpl implements ITimecardService {
 		// Find Active Employee Details
 		List<Employee> employeeList = employeeRepository.getActiveEmployee(UserStatus.ACTIVE.name());
 		for (Employee employee : employeeList) {
-			SalaryProcessor processor = new SalaryProcessor(employee, month, year);
-			Future<String> result = executor.submit(processor);
-			payslipList.put(employee.getEmployeeId(), result.get());
+			if (!employee.getRole().equals("ADMIN")) {
+				SalaryProcessor processor = new SalaryProcessor(employee, month, year);
+				processor.setCityRepository(cityRepository);
+				processor.setDaBonusRepository(daBonusRepository);
+				processor.setDailyPaymentRepository(dailyPaymentRepository);
+				processor.setDaMonthlyPaymentRepository(daMonthlyPaymentRepository);
+				processor.setFixedIncentivesRepository(fixedIncentivesRepository);
+				processor.setLeaveRequestRepository(leaveRequestRepository);
+				processor.setOrgBandConfigRepository(orgBandConfigRepository);
+				Future<String> result = executor.submit(processor);
+				payslipList.put(employee.getEmployeeId(), result.get());
+			}
 		}
+		// Save Data in DAPaysip Table
+		for (Entry<Long, String> entry : payslipList.entrySet()) {
+			DAPayslip daPayslip = new DAPayslip();
+			daPayslip.setEmployeeId(entry.getKey());
+			daPayslip.setFile(entry.getValue());
+			daPayslip.setTxnMonth(month);
+			daPayslip.setTxnYear(year);
+			daPayslip.setTxnDate(JojoHrmUtils.currentDate());
+			daPayslipRespository.save(daPayslip);
+		}
+	}
+
+	@Override
+	public List<DAPayslipTO> viewPayslips(Long employeeId) {
+		List<DAPayslip> payslipsList = daPayslipRespository.getDailyPayment(employeeId);
+		return payslipsList.stream().map(payslip -> mapper.map(payslip, DAPayslipTO.class))
+				.collect(Collectors.toList());
 	}
 
 }

@@ -27,13 +27,14 @@
 			<thead>
 				<tr>
 					<th>Date</th>
+					<th>Name</th>
 					<th>In Time</th>
 					<th>Out Time</th>
 					<th>Hours Worked</th>
 					<th>No of Shipment</th>
-					<th>No of MPOS Transaction</th>
+					<th>No of COD</th>
+					<th>No of MPOS</th>
 					<th>Status</th>
-					<th>Approval Date</th>
 					<th>Action</th>
 				</tr>
 			</thead>
@@ -79,6 +80,7 @@ $(document).ready(function () {
 										{
 											"aaSorting" : [], // Prevent initial sorting
 											"sAjaxSource" : url,
+											"bFilter" : false,
 											"sServerMethod" : "GET",
 											"bProcessing" : false,
 											"bLengthChange" : false,
@@ -95,7 +97,19 @@ $(document).ready(function () {
 											},
 											"aoColumns" : [
 												{
-													"mData" : "txnDate"
+													"mData" : "txnDate",
+													"bSortable" : false,
+													"mRender" : function(
+															data, type,
+															full) {
+														 var txnDate = new Date(data);
+														 var month = txnDate.getMonth()+1;
+														 return txnDate.getDate()+"-"+month+"-"+txnDate.getFullYear();
+											             
+													}
+												},
+												{
+													"mData" : "employeeName"
 												},
 												{
 													"mData" : "inTime"
@@ -110,15 +124,15 @@ $(document).ready(function () {
 													"mData" : "noOfShipment"
 												},
 												{
+													"mData" : "noOfCodDelivered"
+												},
+												{
 													"mData" : "noOfMposTxn"
 												},
 												{
 													"mData" : "status"
 												},
-													{
-														"mData" : "approveDate"
-													},
-													{
+												{
 														"mData" : "id",
 														"bSortable" : false,
 														"mRender" : function(

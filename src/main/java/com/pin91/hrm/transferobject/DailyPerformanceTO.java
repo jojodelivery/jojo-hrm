@@ -11,6 +11,7 @@ public class DailyPerformanceTO {
 
 	private Long id;
 	private Long employeeId;
+	private String employeeName;
 	private Date txnDate;
 	private String inTime;
 	private String outTime;

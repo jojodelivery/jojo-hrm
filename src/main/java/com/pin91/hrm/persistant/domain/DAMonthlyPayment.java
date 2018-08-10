@@ -24,10 +24,16 @@ public class DAMonthlyPayment {
 	private Long id;
 	@Column(name = "employee_id")
 	private Long employeeId;
-	@Column(name = "employee_code")
-	private String empoyeeName;
 	@Column(name = "employee_name")
+	private String empoyeeName;
+	@Column(name = "employee_code")
 	private String empoyeeCode;
+	@Column(name = "mobile")
+	private String mobile;
+	@Column(name = "station")
+	private String station;
+	@Column(name = "band")
+	private String band;
 	@Column(name = "city")
 	private String city;
 	@Column(name = "txn_month")
@@ -38,7 +44,9 @@ public class DAMonthlyPayment {
 	private Integer noOfWorkingDays;
 	@Column(name = "days_worked")
 	private Integer daysWorked;
-	@Column(name = "no_of_day_absent")
+	@Column(name = "leaves_taken")
+	private Integer leavesTaken;
+	@Column(name = "additional_leave")
 	private Integer noOfDaysAbsent;
 	@Column(name = "total_shipment_delivered")
 	private Integer shipmentDelivered;
@@ -59,7 +67,7 @@ public class DAMonthlyPayment {
 	@Column(name = "absent_penalty")
 	private BigDecimal absentPenalty;
 	@Column(name = "no_of_days_late")
-	private BigDecimal noOfDaysLate;
+	private Integer noOfDaysLate;
 	@Column(name = "late_fine")
 	private BigDecimal lateFine;
 	@Column(name = "delivery_incentive")
