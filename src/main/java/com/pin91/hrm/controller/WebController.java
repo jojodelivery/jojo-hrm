@@ -95,4 +95,10 @@ public class WebController {
 		ModelAndView model = new ModelAndView("view-da");
 		return model;
 	}
+	
+	@RequestMapping(value = "/view-payslip", method = RequestMethod.GET)
+	public ModelAndView viewPayslips() {
+		ModelAndView model = new ModelAndView("view-payslip");
+		return model;
+	}
 }

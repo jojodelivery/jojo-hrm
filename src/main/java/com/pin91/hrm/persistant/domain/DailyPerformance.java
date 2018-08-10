@@ -18,7 +18,6 @@ import lombok.Setter;
 @Table(name = "daily_performance")
 public class DailyPerformance {
 
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
@@ -53,4 +52,5 @@ public class DailyPerformance {
 	private Date approveDate;
 	@Column(name = "reject_reason")
 	private String rejectReason;
+
 }

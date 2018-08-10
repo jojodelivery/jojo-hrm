@@ -30,7 +30,8 @@
 					<th>Out Time</th>
 					<th>Hours Worked</th>
 					<th>No of Shipment</th>
-					<th>No of MPOS Transaction</th>
+					<th>No of COD</th>
+					<th>No of MPOS</th>
 					<th>Status</th>
 					<th>Approval Date</th>
 					<th>Action</th>
@@ -53,6 +54,7 @@ $(document).ready(function () {
 										{
 											"aaSorting" : [], // Prevent initial sorting
 											"sAjaxSource" : url,
+											"bFilter" : false,
 											"sServerMethod" : "GET",
 											"bProcessing" : false,
 											"bLengthChange" : false,
@@ -69,7 +71,15 @@ $(document).ready(function () {
 											},
 											"aoColumns" : [
 													{
-														"mData" : "txnDate"
+														"mData" : "txnDate",
+														"bSortable" : false,
+														"mRender" : function(
+																data, type,
+																full) {
+															 var txnDate = new Date(data);
+															 var month = txnDate.getMonth()+1;
+															 return txnDate.getDate()+"-"+month+"-"+txnDate.getFullYear();
+														}
 													},
 													{
 														"mData" : "inTime"
@@ -84,13 +94,28 @@ $(document).ready(function () {
 														"mData" : "noOfShipment"
 													},
 													{
+														"mData" : "noOfCodDelivered"
+													},
+													{
 														"mData" : "noOfMposTxn"
 													},
 													{
 														"mData" : "status"
 													},
 													{
-														"mData" : "approveDate"
+														"mData" : "approveDate",
+														"bSortable" : false,
+														"mRender" : function(
+																data, type,
+																full) {
+															if(data!=null){
+															 var txnDate = new Date(data);
+															 var month = txnDate.getMonth()+1;
+															 return txnDate.getDate()+"-"+month+"-"+txnDate.getFullYear();
+															}else{
+																return "";
+															}
+														}
 													},
 													{
 														"mData" : "id",
@@ -98,11 +123,11 @@ $(document).ready(function () {
 														"mRender" : function(
 																data, type,
 																full) {
-															var btn = '<div style="display: flex; width: auto;"><div style="float:left;" data-toggle="tooltip" title="Edit"  class="action-icon-style" onclick="cancelLeave('
+															var btn = '<div style="display: flex; width: auto;"><div style="float:left;" data-toggle="tooltip" title="Edit"  class="action-icon-style" onclick="editTimecard('
 																	+ data
 																	+ ')"><i class="fa fa-times"></i></div>';
 
-															return btn;
+															return "";
 														}
 													}
 
@@ -111,7 +136,7 @@ $(document).ready(function () {
 
 					});
 
-	function cancelLeave(requestId) {
+	function editTimecard(requestId) {
 		var url = 'timecard/leave/' + requestId
 		$.ajax({
 			contentType : 'application/json; charset=utf-8',

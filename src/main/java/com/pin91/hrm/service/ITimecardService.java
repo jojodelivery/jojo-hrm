@@ -3,6 +3,7 @@ package com.pin91.hrm.service;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import com.pin91.hrm.transferobject.DAPayslipTO;
 import com.pin91.hrm.transferobject.DailyPerformanceTO;
 import com.pin91.hrm.transferobject.LeaveRequestTO;
 
@@ -25,4 +26,6 @@ public interface ITimecardService {
 	public boolean updateTimecard(Long requestId, Long managerId, String status,String rejectReason);
 	
 	public void generatePayslips(Integer month, Integer year) throws InterruptedException, ExecutionException;
+	
+	public List<DAPayslipTO> viewPayslips(Long employeeId);
 }

@@ -73,7 +73,7 @@
 					<div class="form-group input-group">
 						<span class="input-group-addon"><i class="fa fa-list-ol"></i></span>
 						<input type="text" class="form-control" placeholder="Hours Worked"
-							id="hoursWorked" readonly>
+							id="hoursWorked" readonly required>
 					</div>
 				</div>
 
@@ -82,7 +82,7 @@
 					<div class="form-group input-group">
 						<span class="input-group-addon"><i class="fa fa-list-ol"></i></span>
 						<input type="text" class="form-control" placeholder="No Of Shipment Delivered"
-							id="shipmentDelivered" required>
+							id="shipmentDelivered" maxlength="3" onkeypress="return isNumberKey(event)" required>
 					</div>
 				</div>
 				
@@ -91,7 +91,7 @@
 					<div class="form-group input-group">
 						<span class="input-group-addon"><i class="fa fa-list-ol"></i></span>
 						<input type="text" class="form-control" placeholder="No Of COD Delivered"
-							id="codDelivered" required>
+							id="codDelivered" maxlength="3" onkeypress="return isNumberKey(event)" required>
 					</div>
 				</div>
 
@@ -100,7 +100,7 @@
 					<div class="form-group input-group">
 						<span class="input-group-addon"><i class="fa fa-list-ol"></i></span>
 						<input type="text" class="form-control" placeholder="No Of MPOS Transaction"
-							id="mposTransaction" required>
+							id="mposTransaction" maxlength="3" onkeypress="return isNumberKey(event)" required>
 					</div>
 				</div>
 				
@@ -136,9 +136,21 @@
 			return false;
 		}
 		var diff = ( new Date("1970-1-1 " + endValue) - new Date("1970-1-1 " + startValue));
+		if(diff<0){
+			alert('Out time cannot be less than in time');
+			return false;
+		}
 		$("#hoursWorked").val(msToTime(diff));
 	}
 	
+	function isNumberKey(evt){
+		var charCode = (evt.which) ? evt.which : evt.keyCode;
+		if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)){
+			return false;
+		}
+		return true;
+	} 
+
 	function msToTime(duration) {
 		
 	    var milliseconds = minutes = parseInt((duration/(1000*60))%60)
@@ -151,6 +163,16 @@
 	$('#saveTimecard').submit(function(e) {
 		var frm = $('#saveTimecard');
 		e.preventDefault();
+		var startValue=$("#inTime").val();
+		var endValue=$("#outTime").val();
+		if(startValue==""||endValue==""){
+			return false;
+		}
+		var diff = ( new Date("1970-1-1 " + endValue) - new Date("1970-1-1 " + startValue));
+		if(diff<0){
+			alert('Out time cannot be less than in time');
+			return false;
+		}
 		var data;
 		data = {
 			txnDate : Date.parse($("#tnxDate").val()),

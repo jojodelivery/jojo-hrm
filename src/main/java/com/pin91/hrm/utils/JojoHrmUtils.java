@@ -57,4 +57,15 @@ public class JojoHrmUtils {
 		YearMonth yearMonthObject = YearMonth.of(year, month);
 		return yearMonthObject.lengthOfMonth();
 	}
+
+	public static Date dbDateFormat(Date date) {
+		
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			return formatter.parse(formatter.format(date));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

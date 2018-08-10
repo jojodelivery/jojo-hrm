@@ -48,6 +48,7 @@ $(document).ready(function () {
 										{
 											"aaSorting" : [], // Prevent initial sorting
 											"sAjaxSource" : url,
+											"bFilter" : false,
 											"sServerMethod" : "GET",
 											"bProcessing" : false,
 											"bLengthChange" : false,
@@ -63,10 +64,28 @@ $(document).ready(function () {
 											},
 											"aoColumns" : [
 													{
-														"mData" : "startDate"
+														"mData" : "startDate",
+														"bSortable" : false,
+														"mRender" : function(
+																data, type,
+																full) {
+															 var txnDate = new Date(data);
+															 var month = txnDate.getMonth()+1;
+															 return txnDate.getDate()+"-"+month+"-"+txnDate.getFullYear();
+												             
+														}
 													},
 													{
-														"mData" : "endDate"
+														"mData" : "endDate",
+														"bSortable" : false,
+														"mRender" : function(
+																data, type,
+																full) {
+															 var txnDate = new Date(data);
+															 var month = txnDate.getMonth()+1;
+															 return txnDate.getDate()+"-"+month+"-"+txnDate.getFullYear();
+												             
+														}
 													},
 													{
 														"mData" : "noOfDays"

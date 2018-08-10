@@ -1,6 +1,7 @@
 package com.pin91.hrm.controller;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,11 +14,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pin91.hrm.service.ITimecardService;
+import com.pin91.hrm.transferobject.DAPayslipTO;
 import com.pin91.hrm.transferobject.DailyPerformanceTO;
 import com.pin91.hrm.transferobject.KeyValueResponse;
 import com.pin91.hrm.transferobject.LeaveRequestTO;
 import com.pin91.hrm.transferobject.ViewLeaveRequestTO;
+import com.pin91.hrm.transferobject.ViewPayslipTO;
 import com.pin91.hrm.transferobject.ViewTimecardTO;
+import com.pin91.hrm.utils.JojoHrmUtils;
 import com.pin91.hrm.utils.LeaveStatus;
 
 @RestController
@@ -106,31 +110,46 @@ public class TimecardController {
 	}
 
 	@RequestMapping(value = "/approve-timecard/{requestId}/{managerId}/{status}/{rejectReason}", method = RequestMethod.PUT)
-	public ResponseEntity<?> updateTimecard(@PathVariable("employeeId") final Long employeeId,
-			@PathVariable("requestId") final long requestId, @PathVariable("managerId") final Long managerId,
-			@PathVariable("status") final String status, @PathVariable("rejectReason") final String rejectReason) {
+	public ResponseEntity<?> updateTimecard(@PathVariable("requestId") final Long requestId,
+			@PathVariable("managerId") final Long managerId, @PathVariable("status") final String status,
+			@PathVariable("rejectReason") final String rejectReason) {
 
 		boolean result = iTimecardService.updateTimecard(requestId, managerId, status, rejectReason);
 		return new ResponseEntity<Boolean>(result, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/generatePayslips", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> generatePayslips(final Integer employeeId) {
-		boolean result = false;
+	@RequestMapping(value = "/approve-timecard/{requestId}/{managerId}/{status}", method = RequestMethod.PUT)
+	public ResponseEntity<?> updateTimecard(@PathVariable("requestId") final Long requestId,
+			@PathVariable("managerId") final Long managerId, @PathVariable("status") final String status) {
+
+		boolean result = iTimecardService.updateTimecard(requestId, managerId, status, null);
 		return new ResponseEntity<Boolean>(result, HttpStatus.OK);
 	}
-	
+
+	@RequestMapping(value = "/generatePayslips", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> generatePayslips(final Integer employeeId)
+			throws InterruptedException, ExecutionException {
+
+		boolean result = false;
+		iTimecardService.generatePayslips(JojoHrmUtils.currentMonth(), JojoHrmUtils.currentYear());
+		return new ResponseEntity<Boolean>(result, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/payslips/{employeeId}", method = RequestMethod.GET)
+	public ResponseEntity<?> viewPayslips(@PathVariable("employeeId") final Long employeeId)
+			throws InterruptedException, ExecutionException {
+
+		List<DAPayslipTO> payslipList = iTimecardService.viewPayslips(employeeId);
+		ViewPayslipTO viewPayslip = new ViewPayslipTO();
+		viewPayslip.setAaData(payslipList);
+		viewPayslip.setITotalRecords(payslipList.size());
+		viewPayslip.setITotalDisplayRecords(payslipList.size());
+		return new ResponseEntity<ViewPayslipTO>(viewPayslip, HttpStatus.OK);
+	}
 	// Unimplemented methods
 
 	@RequestMapping(value = "/associate-da-worksheet", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> getWorksheet(final Integer employeeId) {
-		KeyValueResponse response = new KeyValueResponse();
-		response.setValue("success");
-		return new ResponseEntity<KeyValueResponse>(response, HttpStatus.OK);
-	}
-
-	@RequestMapping(value = "/payslips/{employeeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> getPayslip(@PathVariable("employeeId") final Integer id) {
 		KeyValueResponse response = new KeyValueResponse();
 		response.setValue("success");
 		return new ResponseEntity<KeyValueResponse>(response, HttpStatus.OK);
