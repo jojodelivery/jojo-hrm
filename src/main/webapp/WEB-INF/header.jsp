@@ -9,7 +9,7 @@
 %>
 <script>
 	alert('Session Expired');
-	window.location.href = "login";
+	window.location.href = "/";
 </script>
 <%
 	return;

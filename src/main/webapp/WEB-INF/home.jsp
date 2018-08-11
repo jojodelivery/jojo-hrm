@@ -107,6 +107,14 @@ body {
 		$('#view-payslip').click(function() {
 			$("#home").load("view-payslip");
 		});
+		
+		$('#download-daily-report').click(function() {
+			$("#home").load("download-daily-report");
+		});
+		
+		$('#download-monthly-report').click(function() {
+			$("#home").load("download-monthly-report");
+		});
 	})
 </script>
 <script>
@@ -152,15 +160,12 @@ body {
 						data-toggle="dropdown"><i class="fa fa-user"></i>Report<b
 							class="caret"></b></a>
 						<ul class="dropdown-menu">
-							<li><a href="#" id="registerordermenu"><i
-									class="fa fa-fw fa-user"></i>Payment Report</a></li>
+							<li><a href="#" id="download-monthly-report"><i
+									class="fa fa-fw fa-user"></i>Download Monthly Report</a></li>
 
 							<li class="divider"></li>
-							<li><a href="#" id="hub-export-report"><i
-									class="fa fa-fw fa-eye"></i>Provide Bonus</a></li>
-							<li class="divider"></li>
-							<li><a href="#" id="hub-create-ecom-packet"><i
-									class="fa fa-fw fa-eye"></i>Download Payslip</a></li>
+							<li><a href="#" id="download-daily-report"><i
+									class="fa fa-fw fa-eye"></i>Download Daily Report</a></li>
 						</ul>
 					</li>
 					<%} %>

@@ -1,5 +1,6 @@
 package com.pin91.hrm.persistant.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -26,4 +27,8 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
 	@Query("SELECT LR FROM LeaveRequest LR WHERE LR.employeeId = :employeeId AND LR.txnMonth = :txnMonth AND LR.txnYear = :txnYear AND LR.status = :status")
 	public List<LeaveRequest> getLeaveDetails(@Param("employeeId") Long employeeId, @Param("txnMonth") Integer txnMonth,
 			@Param("txnYear") Integer txnYear, @Param("status") String status);
+
+	@Query("SELECT LR FROM LeaveRequest LR WHERE LR.employeeId = :employeeId AND LR.startDate <= :txnDate AND LR.endDate >= :txnDate AND LR.status = :status")
+	public LeaveRequest leaveDetailsByDate(@Param("employeeId") Long employeeId, @Param("txnDate") Date txnDate,
+			@Param("status") String status);
 }

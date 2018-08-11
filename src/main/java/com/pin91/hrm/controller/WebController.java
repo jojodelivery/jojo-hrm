@@ -95,10 +95,31 @@ public class WebController {
 		ModelAndView model = new ModelAndView("view-da");
 		return model;
 	}
-	
+
 	@RequestMapping(value = "/view-payslip", method = RequestMethod.GET)
 	public ModelAndView viewPayslips() {
 		ModelAndView model = new ModelAndView("view-payslip");
+		return model;
+	}
+
+	@RequestMapping(value = "/download-daily-report", method = RequestMethod.GET)
+	public ModelAndView viewDailyReport() {
+		ModelAndView model = new ModelAndView("download-daily-report");
+		return model;
+	}
+
+	@RequestMapping(value = "/download-monthly-report", method = RequestMethod.GET)
+	public ModelAndView viewMonthlyReport() {
+		ModelAndView model = new ModelAndView("download-monthly-report");
+		return model;
+	}
+
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public ModelAndView logout(HttpSession session) {
+		ModelAndView model = new ModelAndView("login");
+		session.removeAttribute(EmployeeTO.class.getName());
+		session.removeAttribute("LOGIN_USER");
+		session.invalidate();
 		return model;
 	}
 }

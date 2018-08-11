@@ -15,4 +15,8 @@ public interface DailyPaymentRepository extends JpaRepository<DailyPayment, Long
 	@Query("SELECT DP FROM DailyPayment DP WHERE DP.employeeId = :employeeId AND DP.txnMonth = :txnMonth AND DP.txnYear = :txnYear")
 	public List<DailyPayment> getDailyPayment(@Param("employeeId") Long employeeId, @Param("txnMonth") Integer txnMonth,
 			@Param("txnYear") Integer txnYear);
+	
+	@Query("SELECT DP FROM DailyPayment DP WHERE DP.station = :station AND DP.txnMonth = :txnMonth AND DP.txnYear = :txnYear")
+	public List<DailyPayment> getDailyPayment(@Param("station") String station, @Param("txnMonth") Integer txnMonth,
+			@Param("txnYear") Integer txnYear);
 }
