@@ -33,6 +33,14 @@ public class DailyPayment {
 	private Integer txnYear;
 	@Column(name = "employee_id")
 	private Long employeeId;
+	@Column(name = "station")
+	private String station;
+	@Column(name = "in_time")
+	private String inTime;
+	@Column(name = "out_time")
+	private String outTime;
+	@Column(name = "hours_worked")
+	private String hoursWorked;
 	@Column(name = "base_pay_deduction")
 	private Boolean basePayDeduction;
 	@Column(name = "late_indicator")

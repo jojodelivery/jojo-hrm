@@ -3,7 +3,6 @@ package com.pin91.hrm.service;
 import java.awt.Color;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -59,12 +58,16 @@ public class SalaryProcessor implements Callable<String> {
 	private DABonusRepository daBonusRepository;
 	private DAMonthlyPaymentRepository daMonthlyPaymentRepository;
 	private CityRepository cityRepository;
+	private String payslipLocation;
+	private String serverName;
 
-	public SalaryProcessor(Employee employee, Integer month, Integer year) {
+	public SalaryProcessor(Employee employee, Integer month, Integer year, String payslipLocation, String serverName) {
 		super();
 		this.employee = employee;
 		this.month = month;
 		this.year = year;
+		this.payslipLocation = payslipLocation;
+		this.serverName = serverName;
 	}
 
 	@Override
@@ -94,17 +97,17 @@ public class SalaryProcessor implements Callable<String> {
 		Double latePercentage;
 		BigDecimal ontimeIncentives = new BigDecimal(0);
 		BigDecimal attendanceIncentives = new BigDecimal(0);
+		BigDecimal basePayDeductedCharges = new BigDecimal(0);
 		BigDecimal payableSalary = new BigDecimal(0);
 		BigDecimal bonus = new BigDecimal(0);
 		BigDecimal baseSalary = bandConfig.getBaseSalary();
 		BigDecimal noOfDays = new BigDecimal(JojoHrmUtils.noOfDaysInMonth(month, year));
-		MathContext mc = new MathContext(2, RoundingMode.HALF_UP);
-		BigDecimal perDaySalary = baseSalary.divide(noOfDays, mc);
+		BigDecimal perDaySalary = baseSalary.divide(noOfDays, 2, RoundingMode.CEILING);
 		BigDecimal absentCharges = new BigDecimal(0);
 		Integer leavesTaken = 0;
 		Integer noOfDaysAbsent = 0;
 		Integer basePayDeductedDays = 0;
-		BigDecimal basePayDeductedCharges = new BigDecimal(0,mc);
+
 		for (DailyPayment dailyPayment : paymentList) {
 			shipmentDelivered = shipmentDelivered + dailyPayment.getNoOfDelivery();
 			deliveryIncentives = deliveryIncentives.add(dailyPayment.getDeliveryIncentives());
@@ -192,14 +195,13 @@ public class SalaryProcessor implements Callable<String> {
 	private String generateReport(DAMonthlyPayment daMonthlyPayment) {
 		String fileName = null;
 		try {
-			String FILE = "/home/debdutta/codebase/";
-			 fileName = FILE + daMonthlyPayment.getEmpoyeeCode() + "_" + daMonthlyPayment.getEmpoyeeName() + "_"
-					+ daMonthlyPayment.getTxnMonth() + "_" + daMonthlyPayment.getTxnYear();
+			fileName = payslipLocation + daMonthlyPayment.getEmpoyeeCode() + "_" + daMonthlyPayment.getEmpoyeeName()
+					+ "_" + daMonthlyPayment.getTxnMonth() + "_" + daMonthlyPayment.getTxnYear();
 			Document document = new Document();
 			PdfWriter.getInstance(document, new FileOutputStream(fileName));
 			Image img = null;
 
-			img = Image.getInstance("http://localhost:8080/images/jojo-logo.png");
+			img = Image.getInstance(serverName + "images/jojo-logo.png");
 			img.setAlignment(Image.RIGHT);
 			img.scaleAbsoluteHeight(10);
 			img.scaleAbsoluteWidth(10);
@@ -217,7 +219,6 @@ public class SalaryProcessor implements Callable<String> {
 			footer.setAlignment(Element.ALIGN_LEFT);
 			document.setFooter(footer);
 			document.open();
-			document.open();
 			addMetaData(document, daMonthlyPayment.getTxnMonth(), daMonthlyPayment.getTxnYear());
 			addContent(document, daMonthlyPayment);
 			document.close();
@@ -234,11 +235,13 @@ public class SalaryProcessor implements Callable<String> {
 		addEmptyLine(preface, 1);
 		// Lets write a big header
 		preface.add(new Paragraph(
-				"PAYSLIP FOR THE MONTH OF " + daMonthlyPayment.getTxnMonth() + " " + daMonthlyPayment.getTxnYear(),
+				"PAYSLIP FOR THE MONTH OF " + JojoHrmUtils.getMonth(daMonthlyPayment.getTxnMonth()).toUpperCase() + ", "
+						+ daMonthlyPayment.getTxnYear(),
 				headerFont));
 		preface.setAlignment(Element.ALIGN_CENTER);
 		addEmptyLine(preface, 1);
 		document.add(preface);
+
 		// Emp Id & Name
 		daDetails(document, daMonthlyPayment, "DA Code: " + daMonthlyPayment.getEmpoyeeCode(),
 				"DA Name: " + daMonthlyPayment.getEmpoyeeName());
@@ -254,6 +257,14 @@ public class SalaryProcessor implements Callable<String> {
 		// No of days taken leaves & No Of Days Additional Leaves
 		daDetails(document, daMonthlyPayment, "Leaves taken: " + daMonthlyPayment.getLeavesTaken(),
 				"Additional Leaves : " + daMonthlyPayment.getNoOfDaysAbsent());
+		preface = new Paragraph();
+		// We add one empty line
+		addEmptyLine(preface, 1);
+		// Lets write a big header
+		preface.add(new Paragraph("Payment Breakup", headerFont));
+		preface.setAlignment(Element.ALIGN_LEFT);
+		addEmptyLine(preface, 1);
+		document.add(preface);
 		// Payment Breakup
 		paymentBreakupHeader(document);
 		// Base Salary
@@ -283,7 +294,7 @@ public class SalaryProcessor implements Callable<String> {
 				"-" + daMonthlyPayment.getAbsentPenalty());
 		// Base Salary Deducted for non performance
 		paymentBreakup(document, daMonthlyPayment, "Base salary deducted for non delivery",
-				"" + daMonthlyPayment.getBasePayDeductedDays(), "-" + daMonthlyPayment.getBasePayDeductedCharges().toString());
+				"" + daMonthlyPayment.getBasePayDeductedDays(), "-" + daMonthlyPayment.getBasePayDeductedCharges());
 		paymentBreakup(document, daMonthlyPayment, "Payable Amount", "NA", "" + daMonthlyPayment.getPayableAmount());
 	}
 

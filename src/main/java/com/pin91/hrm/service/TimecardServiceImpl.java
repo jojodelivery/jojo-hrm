@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -88,6 +89,11 @@ public class TimecardServiceImpl implements ITimecardService {
 	@Autowired
 	private DAPayslipRespository daPayslipRespository;
 
+	@Value("${payslip.location}")
+	private String payslipLocation;
+	@Value("${server.name}")
+	private String serverName;
+
 	ExecutorService executor = Executors.newFixedThreadPool(10);
 
 	@Override
@@ -152,6 +158,14 @@ public class TimecardServiceImpl implements ITimecardService {
 		if (performance != null) {
 			throw new JojoHRMException(JojoErrorCode.TIMECARD_EXIST,
 					"Transaction already exist for the day: " + dailyPerformance.getTxnDate());
+		}
+		//TODO
+		// Check if Leave is applied for that day
+		LeaveRequest leaveRequest = leaveRequestRepository.leaveDetailsByDate(dailyPerformance.getEmployeeId(),
+				dailyPerformance.getTxnDate(), LeaveStatus.APPROVED.name());
+		if (leaveRequest != null) {
+			throw new JojoHRMException(JojoErrorCode.LEAVE_EXIST, "DA is on leave the day: "
+					+ dailyPerformance.getTxnDate() + ".Please cancel the leave first to save timecard.");
 		}
 		// Save if it is ok
 		DailyPerformance daPerformance = mapper.map(dailyPerformance, DailyPerformance.class);
@@ -222,6 +236,10 @@ public class TimecardServiceImpl implements ITimecardService {
 			dailyPayment.setTxnMonth(JojoHrmUtils.currentMonth());
 			dailyPayment.setTxnYear(JojoHrmUtils.currentYear());
 			dailyPayment.setEmployeeId(employee.getEmployeeId());
+			dailyPayment.setInTime(dailyPerformance.getInTime());
+			dailyPayment.setOutTime(dailyPerformance.getOutTime());
+			dailyPayment.setHoursWorked(dailyPerformance.getHoursWorked());
+			dailyPayment.setStation(employee.getStation());
 			dailyPayment.setDeliveryIncentives(new BigDecimal(0));
 			dailyPayment.setPetrolCharges(new BigDecimal(0));
 			dailyPayment.setMposCharges(new BigDecimal(0));
@@ -281,7 +299,7 @@ public class TimecardServiceImpl implements ITimecardService {
 		List<Employee> employeeList = employeeRepository.getActiveEmployee(UserStatus.ACTIVE.name());
 		for (Employee employee : employeeList) {
 			if (!employee.getRole().equals("ADMIN")) {
-				SalaryProcessor processor = new SalaryProcessor(employee, month, year);
+				SalaryProcessor processor = new SalaryProcessor(employee, month, year, payslipLocation, serverName);
 				processor.setCityRepository(cityRepository);
 				processor.setDaBonusRepository(daBonusRepository);
 				processor.setDailyPaymentRepository(dailyPaymentRepository);

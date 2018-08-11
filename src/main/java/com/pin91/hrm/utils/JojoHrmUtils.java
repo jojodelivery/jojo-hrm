@@ -1,6 +1,7 @@
 package com.pin91.hrm.utils;
 
 import java.text.DateFormat;
+import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.YearMonth;
@@ -59,7 +60,7 @@ public class JojoHrmUtils {
 	}
 
 	public static Date dbDateFormat(Date date) {
-		
+
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			return formatter.parse(formatter.format(date));
@@ -67,5 +68,9 @@ public class JojoHrmUtils {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static String getMonth(int month) {
+		return new DateFormatSymbols().getMonths()[month - 1];
 	}
 }
