@@ -20,4 +20,6 @@ public interface IUserService {
 	public List<EmployeeTO> getManager();
 
 	public boolean updateEmployee(Long employeeId);
+	
+	public boolean updatePassword(String username,String password);
 }

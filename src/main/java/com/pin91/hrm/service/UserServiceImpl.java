@@ -21,6 +21,7 @@ import com.pin91.hrm.persistant.repository.OrgBandConfigRepository;
 import com.pin91.hrm.persistant.repository.ShiftsRepository;
 import com.pin91.hrm.persistant.repository.UserRepository;
 import com.pin91.hrm.transferobject.EmployeeTO;
+import com.pin91.hrm.utils.JojoErrorCode;
 import com.pin91.hrm.utils.JojoHrmUtils;
 import com.pin91.hrm.utils.UserStatus;
 
@@ -71,10 +72,11 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public EmployeeTO validateUser(String username, String password) throws JojoHRMException {
+
 		// Validate Mobile Number if does not exist save the user
 		User user = userRepository.getUser(username, password);
 		if (user == null) {
-			throw new JojoHRMException("User does not exist");
+			throw new JojoHRMException(JojoErrorCode.INVALID_USER, "User does not exist");
 		}
 		Employee employee = employeeRepository.getEmployeeByUserId(user.getUserId());
 		return mapper.map(employee, EmployeeTO.class);
@@ -82,12 +84,14 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public EmployeeTO getEmployeeByEmployeeId(Long empId) {
+
 		Employee employee = employeeRepository.getEmployeeByUserId(empId);
 		return mapper.map(employee, EmployeeTO.class);
 	}
 
 	@Override
 	public List<EmployeeTO> getEmployeeByCity(Integer city) {
+
 		List<Employee> employeeList = employeeRepository.getEmployeeByCity(city, UserStatus.ACTIVE.name());
 		List<EmployeeTO> empList = new ArrayList<>();
 		for (Employee employee : employeeList) {
@@ -107,6 +111,7 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public List<EmployeeTO> getEmployeeByState(String state) {
+
 		List<Employee> employeeList = employeeRepository.getEmployeeByState(state, UserStatus.ACTIVE.name());
 		return employeeList.stream().map(employee -> mapper.map(employee, EmployeeTO.class))
 				.collect(Collectors.toList());
@@ -114,6 +119,7 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public List<EmployeeTO> getManager() {
+
 		List<Employee> employeeList = employeeRepository.getManager(true, UserStatus.ACTIVE.name());
 		return employeeList.stream().map(employee -> mapper.map(employee, EmployeeTO.class))
 				.collect(Collectors.toList());
@@ -121,13 +127,26 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public boolean updateEmployee(Long employeeId) {
+
 		Employee employee = employeeRepository.getEmployeeByEmpId(employeeId);
 		employee.setStatus(UserStatus.INACTIVE.name());
 		employeeRepository.save(employee);
-		User user = userRepository.findByEmployeeId(employee.getUserId());
+		User user = userRepository.findByUserId(employee.getUserId());
 		user.setStatus(UserStatus.INACTIVE.name());
 		userRepository.save(user);
 		return true;
+	}
+
+	@Override
+	public boolean updatePassword(String username, String password) {
+
+		User user = userRepository.validateUser(username);
+		if (user == null) {
+			throw new JojoHRMException(JojoErrorCode.INVALID_USER, "User does not exist");
+		}
+		user.setPassword(password);
+		userRepository.save(user);
+		return false;
 	}
 
 }
