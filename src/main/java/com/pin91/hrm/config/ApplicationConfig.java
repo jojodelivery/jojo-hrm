@@ -19,7 +19,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 	"com.pin91.hrm.utils",
 	"com.pin91.hrm.transferobject","com.pin91.hrm.service","com.pin91.wallet.interceptor" })
 @SpringBootApplication
-@Import({JojoHrmConfig.class,JojoWebConfig.class})
+@Import({JojoHrmConfig.class,JojoWebConfig.class,JojoSchedulerConfig.class})
 @Configuration
 public class ApplicationConfig extends SpringBootServletInitializer {
 

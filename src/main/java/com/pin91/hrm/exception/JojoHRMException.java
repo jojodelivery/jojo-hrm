@@ -13,6 +13,7 @@ public class JojoHRMException extends RuntimeException {
 
 	public JojoHRMException(String message) {
 		super(message);
+		this.errorMessage = message;
 	}
 
 	public JojoHRMException(String errorCode, String message) {

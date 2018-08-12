@@ -195,10 +195,10 @@ public class SalaryProcessor implements Callable<String> {
 	private String generateReport(DAMonthlyPayment daMonthlyPayment) {
 		String fileName = null;
 		try {
-			fileName = payslipLocation + daMonthlyPayment.getEmpoyeeCode() + "_" + daMonthlyPayment.getEmpoyeeName()
-					+ "_" + daMonthlyPayment.getTxnMonth() + "_" + daMonthlyPayment.getTxnYear();
+			fileName = daMonthlyPayment.getEmpoyeeCode() + "_" + daMonthlyPayment.getEmpoyeeName() + "_"
+					+ daMonthlyPayment.getTxnMonth() + "_" + daMonthlyPayment.getTxnYear() + ".pdf";
 			Document document = new Document();
-			PdfWriter.getInstance(document, new FileOutputStream(fileName));
+			PdfWriter.getInstance(document, new FileOutputStream(payslipLocation + fileName));
 			Image img = null;
 
 			img = Image.getInstance(serverName + "images/jojo-logo.png");

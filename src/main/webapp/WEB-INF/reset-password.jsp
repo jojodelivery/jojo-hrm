@@ -19,15 +19,14 @@
         <div id="loginbox" style="margin-top:180px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">                    
             <div class="panel panel-info" >
                     <div class="panel-heading">
-                        <div class="panel-title">Login</div>
-                        <div style="float:right; font-size: 80%; position: relative; top:-10px"><a href="reset-password">Reset password?</a></div>
+                        <div class="panel-title">Reset Password</div>
                     </div>     
 
                     <div style="padding-top:30px" class="panel-body" >
 
                         <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
                             
-                        <form id="loginform" class="form-horizontal" role="form" action="authenticate" method="post">
+                        <form id="resetform" class="form-horizontal" role="form" action="reset" method="post">
                                     
                             <div style="margin-bottom: 25px" class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
@@ -39,10 +38,14 @@
                                         <input id="password" type="password" class="form-control" name="password" placeholder="password" required="true">
                                     </div>
                                     
-
+							 <div style="margin-bottom: 25px" class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                        <input id="confirmPassword" type="password" class="form-control" name="confirmPassword" placeholder="confirm password" required="true">
+                                    </div>
                                 
                             <div class="input-group">
                                       <c:if test="${not empty ErrorMessage}"><p class="small" style="color: red;">${ErrorMessage}</p></c:if>
+                                      <c:if test="${not empty SuccessMessage}"><p class="small" style="color: red;">${SuccessMessage}<a href="/">Login</a></p></c:if>
                                     </div>
 
 
@@ -50,7 +53,7 @@
                                     <!-- Button -->
 
                                     <div class="col-sm-12 controls">
-                                   		 <input type="submit" class="btn btn-primary" value="Login"  />
+                                   		 <input type="submit" class="btn btn-primary" value="Reset"  />
                                     </div>
                                 </div>
 

@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.pin91.hrm.exception.JojoHRMException;
 import com.pin91.hrm.service.IUserService;
 import com.pin91.hrm.transferobject.EmployeeTO;
+import com.pin91.hrm.utils.JojoErrorCode;
 
 @Controller
 public class WebController {
@@ -31,7 +32,7 @@ public class WebController {
 
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
 	public ModelAndView authenticate(@RequestParam final String username, @RequestParam final String password,
-			HttpSession session) throws JojoHRMException {
+			HttpSession session) {
 
 		JOJO_LOG.log(Level.INFO, "Login process starts for username {}", username);
 		ModelAndView model = null;
@@ -111,6 +112,33 @@ public class WebController {
 	@RequestMapping(value = "/download-monthly-report", method = RequestMethod.GET)
 	public ModelAndView viewMonthlyReport() {
 		ModelAndView model = new ModelAndView("download-monthly-report");
+		return model;
+	}
+
+	@RequestMapping(value = "/reset-password", method = RequestMethod.GET)
+	public ModelAndView viewResetPassword() {
+		ModelAndView model = new ModelAndView("reset-password");
+		return model;
+	}
+
+	@RequestMapping(value = "/reset", method = RequestMethod.POST)
+	public ModelAndView reset(@RequestParam final String username, @RequestParam final String password,
+			@RequestParam final String confirmPassword, HttpSession session) throws JojoHRMException {
+
+		JOJO_LOG.log(Level.INFO, "Reset process starts for username {}", username);
+		ModelAndView model = null;
+		try {
+			if (!password.equals(confirmPassword)) {
+				throw new JojoHRMException(JojoErrorCode.VALIDATION_ERROR,"Password & confirm password are not same");
+			}
+			iUserService.updatePassword(username, confirmPassword);
+			model = new ModelAndView("reset-password");
+			model.addObject("SuccessMessage", "Password has been reset. Please login now");
+		} catch (Exception e) {
+			model = new ModelAndView("reset-password");
+			model.addObject("ErrorMessage", e.getMessage());
+			JOJO_LOG.log(Level.INFO, "Reset process failed with error {}",  e.getMessage());
+		}
 		return model;
 	}
 

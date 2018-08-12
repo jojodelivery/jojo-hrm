@@ -33,6 +33,9 @@ public class JojoHrmUtils {
 		return calendar.get(Calendar.MONTH) + 1; // 5
 	}
 
+	public static int currentDay() {
+		return calendar.get(Calendar.DATE);
+	}
 	public static int currentYear() {
 		return calendar.get(Calendar.YEAR);
 	}

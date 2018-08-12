@@ -202,7 +202,7 @@ function getStation(){
 			},
 			success : function(data) {
 				$("#loading").modal('hide');
-				console.log(data);
+				window.location ='report/download/' + data+'/report';
 			},
 			error : function() {
 				$("#loading").modal('hide');
@@ -210,4 +210,5 @@ function getStation(){
 			}
 		});
 	});
+	
 </script>
