@@ -76,9 +76,9 @@ $(document).ready(function () {
 														"mRender" : function(
 																data, type,
 																full) {
-															var btn = '<div style="display: flex; width: auto;"><div style="float:left;" data-toggle="tooltip" title="Download Payslip"  class="action-icon-style" onclick="download('
+															var btn = '<div style="display: flex; width: auto;"><div style="float:left;" data-toggle="tooltip" title="Download Payslip"  class="action-icon-style" onclick="download(\''
 																	+ data
-																	+ ')"><i class="fa fa-times"></i></div>';
+																	+ '\')"><i class="fa fa-download"></i></div>';
 
 															return btn;
 														}
@@ -89,7 +89,8 @@ $(document).ready(function () {
 
 					});
 
-	function download(requestId) {
-		
+	function download(fileName) {
+		var url ='report/download/' + fileName+'/payslip';
+		window.open(url, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
 	}
 </script>

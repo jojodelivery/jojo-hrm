@@ -42,8 +42,8 @@ public class ReportServiceImpl implements IReportService {
 	@Override
 	public String getMonthlyReport(String station, Integer month, Integer year) {
 
-		String fileName = reportLocation + "Monthly_" + JojoHrmUtils.getMonth(month) + "_" + year + "_"
-				+ System.currentTimeMillis() + ".xlsx";
+		String fileName = "Monthly_" + JojoHrmUtils.getMonth(month) + "_" + year + "_" + System.currentTimeMillis()
+				+ ".xlsx";
 		try {
 			List<DAMonthlyPayment> paymentList = daMonthlyPaymentRepository.getMnthlyPayment(station, month, year);
 
@@ -83,7 +83,7 @@ public class ReportServiceImpl implements IReportService {
 				createCell(row, 27, "" + daMonthlyPayment.getBasePayDeductedCharges());
 
 			}
-			FileOutputStream fos = new FileOutputStream(fileName);
+			FileOutputStream fos = new FileOutputStream(reportLocation + fileName);
 			workbook.write(fos);
 			fos.close();
 		} catch (Exception e) {
@@ -133,8 +133,8 @@ public class ReportServiceImpl implements IReportService {
 	@Override
 	public String getDailyReport(String station, Integer month, Integer year) {
 
-		String fileName = reportLocation + "Daily_" + JojoHrmUtils.getMonth(month) + "_" + year + "_"
-				+ System.currentTimeMillis() + ".xlsx";
+		String fileName = "Daily_" + JojoHrmUtils.getMonth(month) + "_" + year + "_" + System.currentTimeMillis()
+				+ ".xlsx";
 		try {
 			List<DailyPayment> paymentList = dailyPaymentRepository.getDailyPayment(station, month, year);
 			Workbook workbook = new XSSFWorkbook();
@@ -162,7 +162,7 @@ public class ReportServiceImpl implements IReportService {
 				createCell(row, 15, "" + dailyPayment.getNoOfMpsTxn());
 				createCell(row, 16, "" + dailyPayment.getMposCharges());
 			}
-			FileOutputStream fos = new FileOutputStream(fileName);
+			FileOutputStream fos = new FileOutputStream(reportLocation + fileName);
 			workbook.write(fos);
 			fos.close();
 		} catch (Exception e) {
